@@ -76,6 +76,9 @@ static Tag surround[] = {
 	{ "**",         1,      "<strong>",     "</strong>" },
 	{ "_",          1,      "<em>",         "</em>" },
 	{ "*",          1,      "<em>",         "</em>" },
+	/* LaTeX delimiters */
+	{ "$$",        -1,      "$$",           "$$" },
+	{ "$",         -1,      "$",            "$"  },
 };
 
 static const char *replace[][2] = {
@@ -667,7 +670,9 @@ dosurround(const char *begin, const char *end, int newblock) {
 			l++;
 		}
 
-		if (surround[i].process)
+		if (surround[i].process < 0)
+			fwrite(start, sizeof(char), stop - start, stdout);
+		else if (surround[i].process)
 			process(start, stop, 0);
 		else
 			hprint(start, stop);
